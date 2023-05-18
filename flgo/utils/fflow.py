@@ -356,11 +356,10 @@ def gen_task(config={}, task_path:str= '', rawdata_path:str= '', seed:int=0):
         task_pipe.remove_task()
         print("Failed to saving splited dataset.")
     # save visualization
-    try:
-        visualize_func = getattr(bmk_module,'visualize')
-        visualize_func(task_generator, partitioner, task_path)
-    except:
-        pass
+
+    visualize_func = getattr(bmk_module,'visualize')
+    visualize_func(task_generator, partitioner, task_path)
+
 
 def init(task: str, algorithm, option = {}, model=None, Logger: flgo.experiment.logger.BasicLogger = None, Simulator: BasicSimulator=flgo.simulator.DefaultSimulator, scene='horizontal'):
     r"""
