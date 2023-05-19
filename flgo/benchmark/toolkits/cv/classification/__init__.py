@@ -222,7 +222,7 @@ class GeneralCalculator(flgo.benchmark.base.BasicTaskCalculator):
         tdata = self.to_device(data)
         outputs = model(tdata[0])
         loss = self.criterion(outputs, tdata[-1])
-        return {'loss': loss}
+        return {'loss': loss,'outputs': outputs}
 
     @torch.no_grad()
     def test(self, model, dataset, batch_size=64, num_workers=0, pin_memory=False):
