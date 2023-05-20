@@ -6,6 +6,7 @@ except:
     import json
 import torch.utils.data
 import flgo.benchmark.base
+import torch.nn.functional as F
 
 FromDatasetGenerator = flgo.benchmark.base.FromDatasetGenerator
 
@@ -212,7 +213,7 @@ class GeneralCalculator(flgo.benchmark.base.BasicTaskCalculator):
         self.criterion = torch.nn.CrossEntropyLoss()
         self.DataLoader = torch.utils.data.DataLoader
 
-    def compute_loss(self, model, data):
+    def compute_loss(self, model, data, reduce_fn=True):
         """
         Args:
             model: the model to train
@@ -221,7 +222,7 @@ class GeneralCalculator(flgo.benchmark.base.BasicTaskCalculator):
         """
         tdata = self.to_device(data)
         outputs = model(tdata[0])
-        loss = self.criterion(outputs, tdata[-1])
+        loss = F.cross_entropy(outputs, tdata[-1],reduction=reduce_fn)
         return {'loss': loss,'outputs': outputs}
 
     @torch.no_grad()
