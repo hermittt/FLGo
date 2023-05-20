@@ -213,7 +213,7 @@ class GeneralCalculator(flgo.benchmark.base.BasicTaskCalculator):
         self.criterion = torch.nn.CrossEntropyLoss()
         self.DataLoader = torch.utils.data.DataLoader
 
-    def compute_loss(self, model, data, reduce_fn=True):
+    def compute_loss(self, model, data, reduce_fn='mean'):
         """
         Args:
             model: the model to train
