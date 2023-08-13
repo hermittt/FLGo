@@ -8,10 +8,11 @@ class Model(FModule):
         self.layer.bias.data.zero_()
 
     def forward(self, x):
-        x = x.view(-1, x.shape[1] * x.shape[-2] * x.shape[-1])
+        x = self.get_embedding(x)
         x = self.layer(x)
         return x
-
+    def get_embedding(self, x):
+        return x.view(-1, x.shape[1] * x.shape[-2] * x.shape[-1])
 def init_local_module(object):
     pass
 
