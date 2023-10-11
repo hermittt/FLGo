@@ -230,8 +230,11 @@ class BasicServer(BasicParty):
     def initialize(self, *args, **kwargs):
         # 指定随机种子创建随机数生成器对象
         np.random.seed(0)
-        self.rng_sample = np.random.RandomState(self.option['sp_rand']) #采样客户端专用的随机数生成器，以免在其他地方改变随机数列表
-  
+        if 'sp_rand' in self.option:
+            self.rng_sample = np.random.RandomState(self.option['sp_rand'])
+        else:
+            self.rng_sample = np.random.RandomState(0)
+
 
     def run(self):
         """
