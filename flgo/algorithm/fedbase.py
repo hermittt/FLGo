@@ -227,6 +227,11 @@ class BasicServer(BasicParty):
         self.option = option
         self.id = -1
 
+        # 指定随机种子创建随机数生成器对象
+        np.random.seed(0)
+        self.rng_sample = np.random.RandomState(self.option['sp_rand']) #采样客户端专用的随机数生成器，以免在其他地方改变随机数列表
+    
+
     def run(self):
         """
         Running the FL symtem where the global model is trained and evaluated iteratively.
@@ -427,15 +432,16 @@ class BasicServer(BasicParty):
         elif 'uniform' in self.sample_option:
             # original sample proposed by fedavg
             selected_clients = list(
-                np.random.choice(all_clients, min(self.clients_per_round, len(all_clients)), replace=False)) if len(
+                self.rng_sample.choice(all_clients, min(self.clients_per_round, len(all_clients)), replace=False)) if len(
                 all_clients) > 0 else []
         elif 'md' in self.sample_option:
             # the default setting that is introduced by FedProx, where the clients are sampled with the probability in proportion to their local_movielens_recommendation data sizes
             local_data_vols = [self.clients[cid].datavol for cid in all_clients]
             total_data_vol = sum(local_data_vols)
             p = np.array(local_data_vols) / total_data_vol
-            selected_clients = list(np.random.choice(all_clients, self.clients_per_round, replace=True, p=p)) if len(
+            selected_clients = list(self.rng_sample.choice(all_clients, self.clients_per_round, replace=True, p=p)) if len(
                 all_clients) > 0 else []
+        print('客户端选择：',selected_clients)
         return selected_clients
 
     def aggregate(self, models: list, *args, **kwargs):
