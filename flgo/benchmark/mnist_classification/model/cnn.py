@@ -12,7 +12,7 @@ class Model(FModule):
 
     def forward(self, x):
         x = self.get_embedding(x)
-        x = self.fc2(x)
+        x = self.fc(x)
         return x
 
     def get_embedding(self, x):
