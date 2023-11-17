@@ -77,7 +77,7 @@ class BottleNeck(nn.Module):
         return nn.ReLU(inplace=True)(self.residual_function(x) + self.shortcut(x))
 
 class Model(FModule):
-    def __init__(self, block=BasicBlock, num_block=[2,2,2,2], num_classes=100):
+    def __init__(self, block=BasicBlock, num_block=[2,2,2,2], num_classes=10):
         super().__init__()
         self.in_channels = 64
         self.conv1 = nn.Sequential(
