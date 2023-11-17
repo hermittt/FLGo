@@ -23,10 +23,10 @@ the term `IIDPartitioner` is replaced by `DirichletPartitioner`. In addition, pa
 be input by `para`.
 """
 import flgo.benchmark.toolkits.visualization
-from flgo.benchmark.cifar10_classification.model import cnn
+from flgo.benchmark.cifar10_classification.model import resnet18_gn
 import flgo.benchmark.toolkits.partition
 
 default_partitioner = flgo.benchmark.toolkits.partition.IIDPartitioner
 default_partition_para = {'num_clients':100}
-default_model = cnn
+default_model = resnet18_gn
 visualize = flgo.benchmark.toolkits.visualization.visualize_by_class
