@@ -15,10 +15,8 @@ class Model(FModule):
             nn.MaxPool2d(2),
             nn.Flatten(1),
             nn.Linear(1600, 384),
-            nn.BatchNorm1d(384),  # 对全连接层加上BatchNorm
             nn.ReLU(),
             nn.Linear(384, 192),
-            nn.BatchNorm1d(192),  # 对全连接层加上BatchNorm
             nn.ReLU(),
         )
         self.fc = nn.Linear(192, 10)
