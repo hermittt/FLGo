@@ -6,15 +6,19 @@ class Model(FModule):
         super(Model, self).__init__()
         self.embedder = nn.Sequential(
             nn.Conv2d(3, 64, 5),
+            nn.BatchNorm2d(64),  # 加上BatchNorm层
             nn.ReLU(),
             nn.MaxPool2d(2),
             nn.Conv2d(64, 64, 5),
+            nn.BatchNorm2d(64),  # 加上BatchNorm层
             nn.ReLU(),
             nn.MaxPool2d(2),
             nn.Flatten(1),
             nn.Linear(1600, 384),
+            nn.BatchNorm1d(384),  # 对全连接层加上BatchNorm
             nn.ReLU(),
             nn.Linear(384, 192),
+            nn.BatchNorm1d(192),  # 对全连接层加上BatchNorm
             nn.ReLU(),
         )
         self.fc = nn.Linear(192, 10)
