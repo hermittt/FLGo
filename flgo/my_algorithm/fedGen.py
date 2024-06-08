@@ -9,7 +9,7 @@ from flgo.algorithm.fedbase import BasicServer, BasicClient
 from dataclasses import dataclass
 import flgo.algorithm.fedavg as fedavg
 
-from flgo.my_utils import grad_False,grad_True,get_loc_data
+from my_utils import grad_False,grad_True,get_loc_data
 
 
 # based on official code https://github.com/zhuangdizhu/FedGen/blob/main/FLAlgorithms/trainmodel/generator.py
