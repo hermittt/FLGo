@@ -227,7 +227,6 @@ class BasicServer(BasicParty):
         self.option = option
         self.id = -1
 
-    def initialize(self, *args, **kwargs):
         # 指定随机种子创建随机数生成器对象
         np.random.seed(0)
         if 'sp_rand' in self.option:
@@ -235,6 +234,8 @@ class BasicServer(BasicParty):
         else:
             self.rng_sample = np.random.RandomState(0)
 
+    def initialize(self, *args, **kwargs):
+        pass
 
     def run(self):
         """
