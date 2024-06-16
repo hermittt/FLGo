@@ -1,5 +1,22 @@
 import json
 import torch
+
+class KL_Loss_equivalent(nn.Module):
+  def __init__(self,softmax_fn=True):
+    super(KL_Loss_equivalent, self).__init__()
+    self.softmax_fn=softmax_fn
+  def forward(self, output_batch, teacher_outputs, T=8, reduce=True):
+    if self.softmax_fn:
+      output_batch = F.log_softmax(output_batch / T, dim=1)
+      teacher_outputs = F.softmax(teacher_outputs / T, dim=1) + 10 ** (-7)
+    if reduce==True:
+      loss = T * T * \
+                  torch.sum(torch.sum(torch.mul(teacher_outputs, torch.log(teacher_outputs) - output_batch)))/teacher_outputs.size(0)
+    else:
+      loss = T * T * \
+                torch.mean(torch.sum(torch.mul(teacher_outputs, torch.log(teacher_outputs) - output_batch),dim=1))
+    return loss
+  
 def grad_False(model, select_frozen_layers=None):
     if select_frozen_layers==None:
         for name, param in model.named_parameters():
