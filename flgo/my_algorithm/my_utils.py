@@ -1,5 +1,7 @@
 import json
 import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 class KL_Loss_equivalent(nn.Module):
   def __init__(self,softmax_fn=True):
