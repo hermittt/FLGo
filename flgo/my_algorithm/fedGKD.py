@@ -12,6 +12,8 @@ from flgo.my_algorithm.my_utils import grad_False,grad_True,KL_Loss_equivalent
 
 
 class GKDServer(extraServer): #FedGKD，FedKF通用，传输额外的缓存模型
+  def init_extra(self):#额外参数和其他初始化
+    pass
   def initialize(self):
     self.init_algo_para({'local':'ACA','teacher':1,'buffer_len':0,'T':'1','esb_w':5.0,'distill_w':'0.001*self.round'})
     #local(本地模型)=ACA(当前),OCA(缓存),teacher=0(和local一样),1(两个模型一起，双倍通信),buffer_len:<=0按类别，>0最近k个
@@ -21,6 +23,7 @@ class GKDServer(extraServer): #FedGKD，FedKF通用，传输额外的缓存模�
       self.buffer = []
     else:
       self.buffer = [[i, None] for i in range(len(self.clients))] #初始化空的客户端模型列表
+    self.init_algo()
   def extra_received(self,models,recv):
     if self.local=='ACA' and self.teacher==0: #无缓存
       pass
