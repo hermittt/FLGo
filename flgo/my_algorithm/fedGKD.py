@@ -23,7 +23,7 @@ class GKDServer(extraServer): #FedGKD，FedKF通用，传输额外的缓存模�
       self.buffer = []
     else:
       self.buffer = [[i, None] for i in range(len(self.clients))] #初始化空的客户端模型列表
-    self.init_algo()
+    self.init_extra()
   def extra_received(self,models,recv):
     if self.local=='ACA' and self.teacher==0: #无缓存
       pass
@@ -82,13 +82,16 @@ class GKDClient(extraClient):
   def local_training_with_extra_calculate(self, model, loss, outputs, batch_data):
     x, y = batch_data
     x = x.to(self.device)
+    distill_loss = self.cal_L_kl(x,outputs)
+    return loss + distill_loss * eval(self.distill_w)
+  def cal_L_kl(self,x,C_student):
     C_teacher = self.teacher_model(x).detach()
     if self.teacher==0: #只有一个teacher
-      distill_loss = self.KL_loss(C_teacher,outputs,T=eval(self.T))
+      distill_loss = self.KL_loss(C_teacher,C_student,T=eval(self.T))
     if self.teacher==1: #两个都传 
       C_ensemble = self.ensemble_model(x).detach()
-      distill_loss = self.KL_loss(C_teacher,outputs,T=eval(self.T))+self.esb_w*self.KL_loss(C_ensemble,outputs,T=eval(self.T))
-    return loss + distill_loss * eval(self.distill_w)
+      distill_loss = self.KL_loss(C_teacher,C_student,T=eval(self.T))+self.esb_w*self.KL_loss(C_ensemble,C_student,T=eval(self.T))
+    return distill_loss
 class FedGKD:
   Server=GKDServer
   Client=GKDClient
