@@ -34,6 +34,7 @@ class extraClient(BasicClient):
     model.train()
     self.prepare_train(model)
     optimizer = self.calculator.get_optimizer(model, lr=self.learning_rate, weight_decay=self.weight_decay, momentum=self.momentum)
+    self.trainning_output={} # 定义一个空字典,在任意位置添加当前需要输出的内容(如self.trainning_output['loss'] = loss.item())
     for iter in range(self.num_steps):
       batch_data = self.get_batch_data()
       model.zero_grad()
@@ -43,6 +44,11 @@ class extraClient(BasicClient):
       loss.backward()
       if self.clip_grad>0:torch.nn.utils.clip_grad_norm_(parameters=model.parameters(), max_norm=self.clip_grad)
       optimizer.step()
+      if (iter+1) % 50 == 0:
+        # 按固定格式将每一个元素连接成一个字符串，并输出
+        output = ", ".join([f"{key}：{value:.2f}" if isinstance(value, float) 
+                else f"{key}：{value}" for key, value in self.trainning_output.items()])
+        print(output)
     self.after_train(model)
     return
   def prepare_train(self,model):
