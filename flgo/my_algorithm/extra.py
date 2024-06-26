@@ -43,9 +43,12 @@ class extraClient(BasicClient):
       loss.backward()
       if self.clip_grad>0:torch.nn.utils.clip_grad_norm_(parameters=model.parameters(), max_norm=self.clip_grad)
       optimizer.step()
+    self.after_train(model)
     return
   def prepare_train(self,model):
     pass #设置一些辅助模型的参数冻结等
+  def after_train(self,model):
+    pass #处理一些输出等
   def local_training_with_extra_calculate(self, model, loss, outputs, batch_data):
     return loss
 
