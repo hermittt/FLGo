@@ -44,7 +44,7 @@ class extraClient(BasicClient):
       loss.backward()
       if self.clip_grad>0:torch.nn.utils.clip_grad_norm_(parameters=model.parameters(), max_norm=self.clip_grad)
       optimizer.step()
-      if (iter+1) % 50 == 0:
+      if (iter+1) % 50 == 0 and self.trainning_output!={}:
         # 按固定格式将每一个元素连接成一个字符串，并输出
         output = ", ".join([f"{key}：{value:.2f}" if isinstance(value, float) 
                 else f"{key}：{value}" for key, value in self.trainning_output.items()])
