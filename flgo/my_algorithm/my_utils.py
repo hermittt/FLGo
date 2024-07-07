@@ -2,6 +2,19 @@ import json
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
+from torchvision import datasets, transforms
+import cv2 as cv
+
+def get_Normalize_mean_std(transform):
+  for t in transform.transforms:
+    if isinstance(t, transforms.Normalize):
+        return t.std,t.mean
+def get_transform(dataset):
+  if hasattr(dataset, 'transform'):
+    return dataset.transform
+  else: #针对嵌套很多层的情况，递归调用来寻找dataset中的transform
+    return get_transform(dataset.dataset)
 
 class KL_Loss_equivalent(nn.Module):
   def __init__(self,softmax_fn=True):
@@ -42,3 +55,51 @@ def get_loc_data(client_id,task):
   c = torch.tensor(class_info["calss_num"])
   print("client",client_id,"总样本数：",date_num," 各类：", c.int().numpy())
   return c,date_num
+
+def merge(images, size): #https://github.com/znxlwm/pytorch-generative-model-collections/blob/my/utils.py
+    h, w = images.shape[1], images.shape[2]
+    if (images.shape[3] in (3,4)):
+        c = images.shape[3]
+        img = np.zeros((h * size[0], w * size[1], c))
+        for idx, image in enumerate(images):
+            i = idx % size[1]
+            j = idx // size[1]
+            img[j * h:j * h + h, i * w:i * w + w, :] = image
+        return img
+    elif images.shape[3]==1:
+        img = np.zeros((h * size[0], w * size[1]))
+        for idx, image in enumerate(images):
+            i = idx % size[1]
+            j = idx // size[1]
+            img[j * h:j * h + h, i * w:i * w + w] = image[:,:,0]
+        return img
+    else:
+        raise ValueError('in merge(images,size) images parameter ''must have dimensions: HxW or HxWx3 or HxWx4')
+def img_frame(samples,image_frame_dim,transform):
+  samples = samples.cpu().data.numpy().transpose(0, 2, 3, 1)
+  if transform!=None:
+    std,mean=get_Normalize_mean_std(transform)
+    samples = samples*std+mean #反归一化
+  samples = np.squeeze(merge(samples[:image_frame_dim * image_frame_dim, :, :, :], [image_frame_dim, image_frame_dim] ))
+  if samples.ndim == 2:
+    samples = np.expand_dims(samples, axis=2)
+  return samples
+def show_img(samples,image_frame_dim,path,x=None,transform=None):
+  img_float = img_frame(samples,image_frame_dim,transform)
+  if x!=None:
+    x_float = img_frame(x,image_frame_dim,transform)
+    imsize = int(x_float.shape[0]/image_frame_dim)
+    zero_list = np.ones((x_float.shape[0], 2, x_float.shape[2])).tolist()
+    img_float = np.concatenate((x_float[:,:imsize,:],zero_list, img_float), axis=1)
+  image = np.clip((img_float * 255),0, 255).astype(np.uint8)
+  # 将 RGB 图像数据转换为 BGR 顺序, 因为OpenCV 中，默认的颜色通道顺序是 BGR（蓝绿红），而不是常见的 RGB（红绿蓝）
+  image2 = cv.cvtColor(image, cv.COLOR_RGB2BGR)
+  cv.imwrite(path, image2)
+  return image
+
+def img_change(x,transform): #[-1, 1]将范围内的值转换为[0, 1]范围内的值的过程
+  std,mean=get_Normalize_mean_std(transform)
+  if type(std)==tuple:
+    std,mean=std[0],mean[0]
+  x = x*0.5+0.5
+  return (x-mean)/np.clip(std,1e-5,None)
