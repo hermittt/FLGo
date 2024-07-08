@@ -34,7 +34,15 @@ class ResBlock(nn.Module):
     )
   def forward(self, x):
     return x + self.block(x)
-    
+
+def conv_layer(in_channels, out_channels, kernel_size=3, stride=1, padding=1, groups=1):
+    return nn.Sequential(
+        nn.ReflectionPad2d(padding),#填充和周围相似的
+        nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size, stride=stride, groups=groups),
+        nn.BatchNorm2d(out_channels),
+        nn.ReLU(),
+    )
+
 class Encoder(nn.Module):
   def __init__(self, args):
     super().__init__()
