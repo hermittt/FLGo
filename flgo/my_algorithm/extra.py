@@ -37,7 +37,7 @@ class extraClient(BasicClient):
     self.trainning_output={} # 定义一个空字典,在任意位置添加当前需要输出的内容(如self.trainning_output['loss'] = loss.item())
     for iter in range(self.num_steps):
       batch_data = self.get_batch_data()
-      model.zero_grad()
+      optimizer.zero_grad()
       computed_loss = self.calculator.compute_loss(model, batch_data)
       loss, outputs= computed_loss['loss'],computed_loss['outputs']
       loss = self.local_training_with_extra_calculate(model,loss,outputs,batch_data)
