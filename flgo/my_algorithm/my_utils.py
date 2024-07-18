@@ -100,6 +100,6 @@ def show_img(samples,image_frame_dim,path,x=None,transform=None):
 def img_change(x,transform): #[-1, 1]将范围内的值转换为[0, 1]范围内的值的过程
   std,mean=get_Normalize_mean_std(transform)
   if type(std)==tuple:
-    std,mean=std[0],mean[0]
+    std,mean=torch.tensor(std).to(x.device).view(1,-1,1,1),torch.tensor(mean).to(x.device).view(1,-1,1,1)
   x = x*0.5+0.5
-  return (x-mean)/np.clip(std,1e-5,None)
+  return (x-mean)/std.clamp(min=1e-5)
