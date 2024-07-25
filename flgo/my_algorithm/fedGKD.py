@@ -13,7 +13,7 @@ from flgo.my_algorithm.my_utils import grad_False,grad_True,KL_Loss_equivalent
 
 class GKDServer(extraServer): #FedGKD，FedKF通用，传输额外的缓存模型
   def init_extra(self):#额外参数和其他初始化
-    self.init_algo_para({'local':'ACA','teacher':1,'buffer_len':0,'T':'1','esb_w':5.0,'distill_w':'0.001*self.round'})
+    self.init_algo_para({'local':'ACA','teacher':1,'buffer_len':0,'T':'1','esb_w':5.0,'distill_w':'0.005*self.round'})
     #local(本地模型)=ACA(当前),OCA(缓存),teacher=0(和local一样),1(两个模型一起，双倍通信),buffer_len:<=0按类别，>0最近k个
   def initialize(self):
     self.init_extra()
