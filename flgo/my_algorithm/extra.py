@@ -47,7 +47,7 @@ class extraClient(BasicClient):
       self.after_iter(model,batch_data)
       if (iter+1) % 50 == 0 and self.trainning_output!={}:
         # 按固定格式将每一个元素连接成一个字符串，并输出
-        output = ", ".join([f"{key}：{value:.2f}" if isinstance(value, float) 
+        output = ", ".join([f"{key}：{value:.3e}" if isinstance(value, float) 
                 else f"{key}：{value}" for key, value in self.trainning_output.items()])
         print(output)
     self.after_train(model)
