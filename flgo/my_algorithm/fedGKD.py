@@ -81,18 +81,17 @@ class GKDClient(extraClient):
   def local_training_with_extra_calculate(self, model, loss, outputs, batch_data):
     x, y = batch_data
     x = x.to(self.device)
-    distill_loss = self.cal_L_kl(x,outputs)
+    distill_loss = self.cal_L_kl(x,outputs)[0]
     return loss + distill_loss * eval(self.distill_w)
   def cal_L_kl(self,x,C_student):
     with torch.no_grad():
       C_teacher = self.teacher_model(x).detach()
-    if self.teacher==0: #只有一个teacher
-      distill_loss = self.KL_loss(C_teacher.detach(),C_student,T=eval(self.T))
-    if self.teacher==1: #两个都传 
+    if self.teacher==1: #两个teacher 
       with torch.no_grad():
         C_ensemble = self.ensemble_model(x).detach()
-      distill_loss = self.KL_loss(C_teacher.detach(),C_student,T=eval(self.T))+self.esb_w*self.KL_loss(C_ensemble.detach(),C_student,T=eval(self.T))
-    return distill_loss
+      C_teacher = C_teacher+self.esb_w*C_ensemble
+    distill_loss = self.KL_loss(C_teacher.detach(),C_student,T=eval(self.T))
+    return distill_loss,C_teacher
 class FedGKD:
   Server=GKDServer
   Client=GKDClient
