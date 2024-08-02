@@ -86,11 +86,12 @@ class GKDClient(extraClient):
   def cal_L_kl(self,x,C_student):
     with torch.no_grad():
       C_teacher = self.teacher_model(x).detach()
+    if self.teacher==1: #一个teacher
+      distill_loss = self.KL_loss(C_teacher.detach(),C_student,T=eval(self.T))
     if self.teacher==1: #两个teacher 
       with torch.no_grad():
         C_ensemble = self.ensemble_model(x).detach()
-      C_teacher = C_teacher+self.esb_w*C_ensemble
-    distill_loss = self.KL_loss(C_teacher.detach(),C_student,T=eval(self.T))
+      distill_loss = self.KL_loss(C_teacher.detach(),C_student,T=eval(self.T))+self.esb_w*self.KL_loss(C_ensemble.detach(),C_student,T=eval(self.T))
     return distill_loss,C_teacher
 class FedGKD:
   Server=GKDServer
