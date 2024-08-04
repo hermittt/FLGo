@@ -83,16 +83,18 @@ class GKDClient(extraClient):
     x = x.to(self.device)
     distill_loss = self.cal_L_kl(x,outputs)[0]
     return loss + distill_loss * eval(self.distill_w)
-  def cal_L_kl(self,x,C_student):
+  def cal_L_kl(self,x,C_student,reduce=True):
     with torch.no_grad():
       C_teacher = self.teacher_model(x).detach()
     if self.teacher==1: #一个teacher
-      distill_loss = self.KL_loss(C_teacher.detach(),C_student,T=eval(self.T))
+      distill_loss = self.KL_loss(C_teacher.detach(),C_student,T=eval(self.T),reduce=reduce)
+      return distill_loss,F.softmax(C_teacher)
     if self.teacher==1: #两个teacher 
       with torch.no_grad():
         C_ensemble = self.ensemble_model(x).detach()
-      distill_loss = self.KL_loss(C_teacher.detach(),C_student,T=eval(self.T))+self.esb_w*self.KL_loss(C_ensemble.detach(),C_student,T=eval(self.T))
-    return distill_loss,C_teacher
+      distill_loss = self.KL_loss(C_teacher.detach(),C_student,T=eval(self.T),reduce=reduce)\
+              +self.esb_w*self.KL_loss(C_ensemble.detach(),C_student,T=eval(self.T),reduce=reduce)
+      return distill_loss,(F.softmax(C_teacher)+F.softmax(C_ensemble))/2
 class FedGKD:
   Server=GKDServer
   Client=GKDClient
