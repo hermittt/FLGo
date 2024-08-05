@@ -26,10 +26,10 @@ class KL_Loss_equivalent(nn.Module):
       teacher_outputs = F.softmax(teacher_outputs / T, dim=1) + 10 ** (-7)
     if reduce==True:
       loss = T * T * \
-                  torch.sum(torch.sum(torch.mul(teacher_outputs, torch.log(teacher_outputs) - output_batch)))/teacher_outputs.size(0)
+                torch.mean(torch.sum(torch.mul(teacher_outputs, torch.log(teacher_outputs) - output_batch),dim=1))
     else:
       loss = T * T * \
-                torch.mean(torch.sum(torch.mul(teacher_outputs, torch.log(teacher_outputs) - output_batch),dim=1))
+                torch.sum(torch.mul(teacher_outputs, torch.log(teacher_outputs) - output_batch),dim=1)
     return loss
   
 def grad_False(model, select_frozen_layers=None):
