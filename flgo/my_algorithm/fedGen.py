@@ -108,8 +108,9 @@ class Server(BasicServer):
       uploaded_weights[i] = w / tot_samples
     return uploaded_weights
 class Client(extraClient):
-  def extra_received(self, received_pkg):
+  def unpack(self, received_pkg):
     self.generative_model = received_pkg['generative_model']
+    return received_pkg['model']
   def initialize(self, *args, **kwargs):
     self.loss = nn.CrossEntropyLoss()
   def prepare_train(self,model):
