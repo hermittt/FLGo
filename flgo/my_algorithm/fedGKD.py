@@ -67,12 +67,18 @@ class GKDClient(extraClient):
     self.ensemble_model = None
     self.loss = nn.CrossEntropyLoss()
     self.KL_loss = KL_Loss_equivalent()
-  def extra_received(self, received_pkg):
-    if self.teacher==1: #两个都传 
-      self.ensemble_model = received_pkg['ensemble_model']
+  def unpack(self, received_pkg):
+    self.teacher_model = received_pkg['model']
     self.round = received_pkg['round']
+    if self.teacher==0: #只有一个teacher
+      return copy.deepcopy(received_pkg['model'])
+    else: #两个都传 
+      self.ensemble_model = received_pkg['ensemble_model']
+      if self.local=='ACA':
+        return copy.deepcopy(received_pkg['model'])
+      else:
+        return copy.deepcopy(received_pkg['ensemble_model'])
   def prepare_train(self,model):
-    self.teacher_model = copy.deepcopy(model)
     grad_False(self.teacher_model)
     self.teacher_model.eval()
     if self.teacher==1: #两个都传 
