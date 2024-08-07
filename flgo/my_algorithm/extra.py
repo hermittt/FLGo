@@ -25,10 +25,7 @@ class extraServer(BasicServer):
     pass
 class extraClient(BasicClient):
   def unpack(self, received_pkg):
-    self.extra_received(received_pkg)
     return received_pkg['model']
-  def extra_received(self, received_pkg):
-    pass #其他都直接写到self.里
   def train(self, model):
     grad_True(model)
     model.train()
