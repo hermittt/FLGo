@@ -86,7 +86,7 @@ class GKDClient(extraClient):
   def cal_L_kl(self,x,C_student,reduce=True):
     with torch.no_grad():
       C_teacher = self.teacher_model(x).detach()
-    if self.teacher==1: #一个teacher
+    if self.teacher==0: #一个teacher
       distill_loss = self.KL_loss(C_teacher.detach(),C_student,T=eval(self.T),reduce=reduce)
       return distill_loss,F.softmax(C_teacher)
     if self.teacher==1: #两个teacher 
