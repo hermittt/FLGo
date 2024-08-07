@@ -43,9 +43,10 @@ class Client(extraClient):
   def initialize(self, *args, **kwargs):
     self.global_logits = None
     self.loss = nn.CrossEntropyLoss()
-  def extra_received(self, received_pkg):
+  def unpack(self, received_pkg):
     self.global_logits = received_pkg['global_logits']
     self.logits = defaultdict(list)
+    return received_pkg['model']
   def local_training_with_extra_calculate(self, model, loss, outputs, batch_data):
     x, y = batch_data
     if self.global_logits != None:
