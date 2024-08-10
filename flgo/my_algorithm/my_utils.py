@@ -6,6 +6,36 @@ import numpy as np
 from torchvision import datasets, transforms
 import cv2 as cv
 
+def save_bn_params(model, teacher):
+    """
+    保存 model 的 Batch Normalization 层参数。
+    Returns:
+        dict: 保存的 Batch Normalization 层参数。
+    """
+    saved_bn_params = {}
+    for (name, module), (_, teacher_module) in zip(model.named_modules(), teacher.named_modules()):
+        if isinstance(module, (nn.BatchNorm1d, nn.BatchNorm2d, nn.BatchNorm3d)):
+            # 保存当前 model 的 Batch Normalization 层参数
+            saved_bn_params[name] = {
+                'running_mean': module.running_mean.clone(),
+                'running_var': module.running_var.clone(),
+            }
+    return saved_bn_params
+
+def restore_bn_params(model, saved_bn_params):
+    """
+    恢复 model 中保存的 Batch Normalization 层参数。
+
+    Args:
+        model (nn.Module): 目标模型。
+        saved_bn_params (dict): 之前保存的 Batch Normalization 层参数。
+    """
+    for name, module in model.named_modules():
+        if name in saved_bn_params:
+            # 恢复之前保存的参数
+            module.running_mean = saved_bn_params[name]['running_mean']
+            module.running_var = saved_bn_params[name]['running_var']
+
 def get_Normalize_mean_std(transform):
   for t in transform.transforms:
     if isinstance(t, transforms.Normalize):
