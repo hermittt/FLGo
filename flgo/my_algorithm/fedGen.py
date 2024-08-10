@@ -11,7 +11,7 @@ from flgo.my_algorithm.extra import extraServer, extraClient
 from dataclasses import dataclass
 import flgo.algorithm.fedavg as fedavg
 
-from flgo.my_algorithm.my_utils import grad_False,grad_True,get_loc_data
+from flgo.my_algorithm.my_utils import grad_False,grad_True,get_loc_data,save_bn_params,restore_bn_params
 
 # based on official code https://github.com/zhuangdizhu/FedGen/blob/main/FLAlgorithms/trainmodel/generator.py
 
@@ -121,7 +121,9 @@ class Client(extraClient):
     labels = torch.LongTensor(labels).to(self.device)
     with torch.no_grad():
       z = self.generative_model(labels)
+    saved_bn_params = save_bn_params(model, self.teacher_model)
     z_loss = self.alpha * self.loss(model.fc(z.detach(), labels)
+    restore_bn_params(model, saved_bn_params)    # 恢复model的原始BN层参数
     return loss + z_loss
 
 class FedGen:
