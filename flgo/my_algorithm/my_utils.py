@@ -13,7 +13,7 @@ def save_bn_params(model):
         dict: 保存的 Batch Normalization 层参数。
     """
     saved_bn_params = {}
-    for (name, module), (_, teacher_module) in zip(model.named_modules(), teacher.named_modules()):
+    for (name, module) in model.named_modules():
         if isinstance(module, (nn.BatchNorm1d, nn.BatchNorm2d, nn.BatchNorm3d)):
             # 保存当前 model 的 Batch Normalization 层参数
             saved_bn_params[name] = {
