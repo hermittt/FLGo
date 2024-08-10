@@ -121,7 +121,7 @@ class Client(extraClient):
     labels = torch.LongTensor(labels).to(self.device)
     with torch.no_grad():
       z = self.generative_model(labels)
-    saved_bn_params = save_bn_params(model, self.teacher_model)
+    saved_bn_params = save_bn_params(model)
     z_loss = self.alpha * self.loss(model.fc(z.detach()), labels)
     restore_bn_params(model, saved_bn_params)    # 恢复model的原始BN层参数
     return loss + z_loss
