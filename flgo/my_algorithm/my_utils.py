@@ -6,7 +6,7 @@ import numpy as np
 from torchvision import datasets, transforms
 import cv2 as cv
 
-def save_bn_params(model, teacher):
+def save_bn_params(model):
     """
     保存 model 的 Batch Normalization 层参数。
     Returns:
