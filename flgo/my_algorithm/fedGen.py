@@ -121,7 +121,8 @@ class Client(extraClient):
     labels = torch.LongTensor(labels).to(self.device)
     with torch.no_grad():
       z = self.generative_model(labels)
-    return loss + self.alpha * self.loss(model.fc(z), labels)
+    z_loss = self.alpha * self.loss(model.fc(z.detach(), labels)
+    return loss + z_loss
 
 class FedGen:
   Server=Server
