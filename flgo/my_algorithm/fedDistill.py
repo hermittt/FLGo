@@ -55,7 +55,7 @@ class Client(extraClient):
         y_c = yy.item()
         if type(self.global_logits[y_c]) != type([]) and self.global_logits[y_c] != None:
           logit_new[i, :] = self.global_logits[y_c].data
-      loss += self.loss(outputs, logit_new.softmax(dim=1)) * self.lamda
+      loss += self.loss(outputs, logit_new.detach().softmax(dim=1)) * self.lamda
     for i, yy in enumerate(y):
       y_c = yy.item()
       self.logits[y_c].append(outputs[i, :].detach().data)
