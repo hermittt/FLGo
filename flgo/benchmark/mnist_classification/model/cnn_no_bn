@@ -6,9 +6,9 @@ class Model(FModule):
     def __init__(self):
         super(Model, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=5, padding=2)
-        self.bn1 = nn.BatchNorm2d(32)  # 添加 BatchNorm
+        self.bn1 = nn.GroupNorm(1, 64),  # 将 BatchNorm2d 替换为 GroupNorm, 1是分组数量
         self.conv2 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=5, padding=2)
-        self.bn2 = nn.BatchNorm2d(64)  # 添加 BatchNorm
+        self.bn2 = nn.GroupNorm(1, 64),  # 将 BatchNorm2d 替换为 GroupNorm, 1是分组数量
         self.fc1 = nn.Linear(3136, 512)
         self.fc = nn.Linear(512, 10)
 
