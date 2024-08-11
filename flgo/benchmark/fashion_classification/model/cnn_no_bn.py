@@ -2,7 +2,7 @@ from torch import nn
 import torch.nn.functional as F
 from flgo.utils.fmodule import FModule
 
-class Model(nn.Module):  # 确保继承自 nn.Module
+class Model(FModule):
     def __init__(self):
         super(Model, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=5, padding=2)
