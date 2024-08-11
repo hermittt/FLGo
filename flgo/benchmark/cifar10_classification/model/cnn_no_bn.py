@@ -6,11 +6,11 @@ class Model(FModule):
         super(Model, self).__init__()
         self.embedder = nn.Sequential(
             nn.Conv2d(3, 64, 5),
-            nn.BatchNorm2d(64),  # 加上BatchNorm层
+            nn.GroupNorm(1, 64),  # 将 BatchNorm2d 替换为 GroupNorm, 1是分组数量
             nn.ReLU(),
             nn.MaxPool2d(2),
             nn.Conv2d(64, 64, 5),
-            nn.BatchNorm2d(64),  # 加上BatchNorm层
+            nn.GroupNorm(1, 64),  # 将 BatchNorm2d 替换为 GroupNorm, 1是分组数量
             nn.ReLU(),
             nn.MaxPool2d(2),
             nn.Flatten(1),
