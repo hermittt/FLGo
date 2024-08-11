@@ -6,9 +6,9 @@ class Model(FModule):
     def __init__(self):
         super(Model, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=5, padding=2)
-        self.bn1 = nn.GroupNorm(1, 64),  # 将 BatchNorm2d 替换为 GroupNorm, 1是分组数量
+        self.gn1 = nn.GroupNorm(1, 64),  # 将 BatchNorm2d 替换为 GroupNorm, 1是分组数量
         self.conv2 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=5, padding=2)
-        self.bn2 = nn.GroupNorm(1, 64),  # 将 BatchNorm2d 替换为 GroupNorm, 1是分组数量
+        self.gn2 = nn.GroupNorm(1, 64),  # 将 BatchNorm2d 替换为 GroupNorm, 1是分组数量
         self.fc1 = nn.Linear(3136, 512)
         self.fc = nn.Linear(512, 10)
 
@@ -20,8 +20,8 @@ class Model(FModule):
     def get_embedding(self, x):
         x = x.view((x.shape[0],28,28))
         x = x.unsqueeze(1)
-        x = F.max_pool2d(F.relu(self.bn1(self.conv1(x))), 2)  # BatchNorm应用在激活函数之前
-        x = F.max_pool2d(F.relu(self.bn2(self.conv2(x))), 2)  # BatchNorm应用在激活函数之前
+        x = F.max_pool2d(F.relu(self.gn1(self.conv1(x))), 2)  # Norm应用在激活函数之前
+        x = F.max_pool2d(F.relu(self.gn2(self.conv2(x))), 2)  # Norm应用在激活函数之前
         x = x.view(-1, x.shape[1]*x.shape[2]*x.shape[3])
         x = F.relu(self.fc1(x)) 
         return x
