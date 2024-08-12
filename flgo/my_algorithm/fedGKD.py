@@ -14,7 +14,7 @@ from flgo.my_algorithm.my_utils import grad_False,grad_True,KL_Loss_equivalent
 class GKDServer(extraServer): #FedGKD，FedKF通用，传输额外的缓存模型
   def init_extra(self):#额外参数和其他初始化
     #self.init_algo_para({'local':'ACA','teacher':1,'buffer_len':0,'T':'10','esb_w':1.0,'distill_w':'0.01*self.round'})
-    self.init_algo_para({'local':'ACA','teacher':1,'buffer_len':0,'T':'10','esb_w':1.0,'distill_w':'0.05*self.round'})
+    self.init_algo_para({'local':'ACA','teacher':1,'buffer_len':0,'T':'10','esb_w':1.0,'distill_w':'0.05*self.round','min_round':10})
     #local(本地模型)=ACA(当前),OCA(缓存),teacher=0(和local一样),1(两个模型一起，双倍通信),buffer_len:<=0按类别，>0最近k个
   def initialize(self):
     self.init_extra()
@@ -86,10 +86,13 @@ class GKDClient(extraClient):
       grad_False(self.ensemble_model)
       self.ensemble_model.eval()
   def local_training_with_extra_calculate(self, model, loss, outputs, batch_data):
-    x, y = batch_data
-    x = x.to(self.device)
-    distill_loss = self.cal_L_kl(x,outputs)[0]
-    return loss + distill_loss * eval(self.distill_w)
+    if self.round>self.min_round:
+      x, y = batch_data
+      x = x.to(self.device)
+      distill_loss = self.cal_L_kl(x,outputs)[0]
+      return loss + distill_loss * eval(self.distill_w)
+    else:
+      return loss
   def cal_L_kl(self,x,C_student,reduce=True):
     with torch.no_grad():
       C_teacher = self.teacher_model(x).detach()
