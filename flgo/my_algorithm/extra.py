@@ -11,6 +11,8 @@ from flgo.my_algorithm.my_utils import grad_False,grad_True
 
 
 class extraServer(BasicServer):
+  def init_extra(self):#额外参数和其他初始化
+    self.init_algo_para({'min_round':10}) #开启本地漂移控制
   def iterate(self):
     self.selected_clients = self.sample()
     recv = self.communicate(self.selected_clients)
