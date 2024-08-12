@@ -43,7 +43,7 @@ class Server(BasicServer):
   def initialize(self):
     BasicServer.initialize(self)
     self.init_algo_para({'server_epochs':500,'num_classes':10,'noise_dim':256,'generator_learning_rate':0.05,
-              'localize_feature_extractor':False,'hidden_dim':256,'learning_rate_decay_gamma':0.99,'alpha':0.2,'min_round':5})
+              'localize_feature_extractor':False,'hidden_dim':256,'learning_rate_decay_gamma':0.99,'alpha':0.2})
     self.batch_size = int(self.option['batch_size'])
     self.generative_model = Generative_fedGEN(self.noise_dim, self.num_classes, self.hidden_dim, self.model.fc.in_features, self.device).to(self.device)
     self.generative_optimizer = torch.optim.Adam(
