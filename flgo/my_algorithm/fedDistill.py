@@ -13,7 +13,7 @@ from collections import defaultdict
 class Server(extraServer):
   def initialize(self):
     BasicServer.initialize(self)
-    self.init_algo_para({'lamda':1.0,'num_classes':10})
+    self.init_algo_para({'lamda':1.0,'num_classes':10,'min_round':5})
     self.global_logits = [None for _ in range(self.num_classes)]
   def extra_received(self,models,recv):
     self.global_logits = self._logit_aggregation(recv["logits"])
