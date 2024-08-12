@@ -37,7 +37,8 @@ class extraClient(BasicClient):
       model.train()
       computed_loss = self.calculator.compute_loss(model, batch_data)
       loss, outputs= computed_loss['loss'],computed_loss['outputs']
-      loss = self.local_training_with_extra_calculate(model,loss,outputs,batch_data)
+      if self.round>self.min_round:
+        loss = self.local_training_with_extra_calculate(model,loss,outputs,batch_data)
       loss.backward()
       if self.clip_grad>0:torch.nn.utils.clip_grad_norm_(parameters=model.parameters(), max_norm=self.clip_grad)
       optimizer.step()
