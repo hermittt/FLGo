@@ -11,8 +11,6 @@ from flgo.my_algorithm.my_utils import grad_False,grad_True
 
 
 class extraServer(BasicServer):
-  def init_extra(self):#额外参数和其他初始化
-    self.init_algo_para({'min_round':5}) #开启本地漂移控制
   def iterate(self):
     self.selected_clients = self.sample()
     recv = self.communicate(self.selected_clients)
@@ -39,8 +37,7 @@ class extraClient(BasicClient):
       model.train()
       computed_loss = self.calculator.compute_loss(model, batch_data)
       loss, outputs= computed_loss['loss'],computed_loss['outputs']
-      if self.round>self.min_round:
-        loss = self.local_training_with_extra_calculate(model,loss,outputs,batch_data)
+      loss = self.local_training_with_extra_calculate(model,loss,outputs,batch_data)
       loss.backward()
       if self.clip_grad>0:torch.nn.utils.clip_grad_norm_(parameters=model.parameters(), max_norm=self.clip_grad)
       optimizer.step()
