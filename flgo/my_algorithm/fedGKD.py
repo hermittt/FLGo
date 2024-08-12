@@ -86,10 +86,11 @@ class GKDClient(extraClient):
       grad_False(self.ensemble_model)
       self.ensemble_model.eval()
   def local_training_with_extra_calculate(self, model, loss, outputs, batch_data):
-    x, y = batch_data
-    x = x.to(self.device)
-    distill_loss = self.cal_L_kl(x,outputs)[0]
-    return loss + distill_loss * eval(self.distill_w)
+    if self.round>self.min_round:
+      x, y = batch_data
+      x = x.to(self.device)
+      distill_loss = self.cal_L_kl(x,outputs)[0]
+      return loss + distill_loss * eval(self.distill_w)
   def cal_L_kl(self,x,C_student,reduce=True):
     with torch.no_grad():
       C_teacher = self.teacher_model(x).detach()
