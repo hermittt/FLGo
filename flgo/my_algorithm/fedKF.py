@@ -144,7 +144,7 @@ class KFClient(GKDClient):
     self.sample_y_=sample_y_.unsqueeze(0).repeat(self.num_classes,1,1).flatten().to(self.device)
     #self.bn_loss = BN_loss(self.bns_ls) #bn_loss 1
   def extra_init(self):
-    if VQ==1:
+    if self.VQ==1:
       vqgan = get_model(self.option['vqgan_args'],self.option['task'],self.id)
     else:
       vqgan = None
@@ -185,7 +185,7 @@ class KFClient(GKDClient):
       return self.G(z_G,y_G)[0]
     grad_True(self.G)
     self.G.train()
-    if VQ==1:
+    if self.VQ==1:
       grad_False(self.G.vqgan)
       self.G.vqgan.eval()
     #self.bn_loss.bn_clear() #bn_loss 3
