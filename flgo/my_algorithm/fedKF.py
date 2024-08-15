@@ -1,5 +1,6 @@
 import os
 import sys
+import wandb
 from flgo.utils import fmodule
 import flgo
 import numpy as np
