@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 from flgo.my_algorithm.fedGKD import GKDServer, GKDClient
 from flgo.my_algorithm.my_utils import grad_False,grad_True,KL_Loss_equivalent,get_loc_data,get_Normalize_mean_std,\
 get_transform,merge,show_img,img_change
-from flgo.my_algorithm.my_models import Decoder,conv_layer
+from flgo.my_algorithm.my_models import Encoder,Decoder,conv_layer
 import threading
 
 def img_change(x,transform): #[-1, 1]将范围内的值转换为[0, 1]范围内的值的过程
