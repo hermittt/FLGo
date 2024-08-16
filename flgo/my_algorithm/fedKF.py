@@ -209,6 +209,7 @@ class KFClient(GKDClient):
     self.generative_optimizer.step()
     return
   def after_train(self,model):
+    self.local_step+=1
     if self.show_fn==1 and self.round>self.min_round:
       grad_False(self.G)
       self.G.eval()
