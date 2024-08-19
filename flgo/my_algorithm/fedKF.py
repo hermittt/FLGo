@@ -176,12 +176,41 @@ class KFClient(GKDClient):
       #return loss + (distill_loss+G_distill_loss*self.distill_coefficient)* eval(self.distill_w)
     else:
       return loss
+  def prepare_train(self,model):
+    grad_False(self.teacher_model)
+    self.teacher_model.eval()
+    if self.teacher==1: #两个都传
+      grad_False(self.ensemble_model)
+      self.ensemble_model.eval()
+    self.step0_flag = 1
+  def local_training_with_extra_calculate(self, model, loss, outputs, batch_data):
+    grad_False(self.G)
+    self.G.eval()
+    x, y = batch_data
+    x,y = x.to(self.device),y.to(self.device)
+    if self.step0_flag == 1:
+      self.step0_flag = 0
+      y_pre = outputs.max(1)[1]
+      matches = y_pre == y # 比较两个tensor是否相等
+      self.init_accuracy = matches.sum().item() / len(y)
+      print(self.init_accuracy)
+    if self.round>self.min_round :
+      y_G = generate_labels(self.num_classes, y.shape[0], rng_local=self.rng_local).to(self.device)
+      with torch.no_grad():
+        G = self.generate_and_train_generator(x,y,y_G,train=False)
+      distill_loss = self.cal_L_kl(x,outputs)[0]
+      G_distill_loss = self.cal_L_kl(G.detach(),model(G.detach()))[0]
+      return loss + (self.distill_coefficient*distill_loss+G_distill_loss)/(self.distill_coefficient+1)* eval(self.distill_w) *max(0.01,self.init_accuracy)
+    else:
+      return loss
+
   def after_iter(self,model,batch_data):
     x, y = batch_data
     x,y = x.to(self.device),y.to(self.device)
     y_G = generate_labels(self.num_classes, y.shape[0], rng_local=self.rng_local).to(self.device)
     if y.shape[0]>1 and self.round>self.min_round:
       self.generate_and_train_generator(x,y,y_G)
+      
   def generate_and_train_generator(self,x,y,y_G,train=True): #生成图像，并执行一步生成模型的训练step
     z_G = torch.tensor(np.random.normal(0, 1, (y.shape[0], self.noise_dim))).to(self.device).float()
     if train==False:
