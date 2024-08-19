@@ -123,7 +123,7 @@ class Generative(nn.Module):
 
 class KFServer(GKDServer): #FedGKD，FedKF通用，传输额外的缓存模型
   def init_extra(self):#额外参数和其他初始化
-    self.init_algo_para({'local':'ACA','teacher':1,'show_fn':1 ,'buffer_len':0,'T':'10','esb_w':1.0,'distill_w':'0.05*self.round','distill_coefficient':1,'min_round':5,'bns_ls':'0',
+    self.init_algo_para({'local':'ACA','teacher':1,'show_fn':1 ,'buffer_len':0,'T':'10','esb_w':1.0,'distill_w':'0.05*self.round','distill_coefficient':0,'min_round':5,'bns_ls':'0',
               #local(本地模型)=ACA(当前),OCA(缓存),teacher=0(和local一样),1(两个模型一起，双倍通信),buffer_len:<=0按类别，>0最近k个
               'act_w':1e-4,'noise_dim':100,'generator_learning_rate':5e-4,'VQ':0,
               'input_size':self.option['imsz'],'image_channels':self.option['imch'],'latent_dim':self.option['latent_dim'],'num_classes':self.option['num_classes'],'transform':get_transform(self.test_data)})
