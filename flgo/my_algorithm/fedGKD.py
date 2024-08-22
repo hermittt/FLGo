@@ -13,9 +13,23 @@ from flgo.my_algorithm.my_utils import grad_False,grad_True,KL_Loss_equivalent
 
 class GKDServer(extraServer): #FedGKD，FedKF通用，传输额外的缓存模型
   def init_extra(self):#额外参数和其他初始化
-    #self.init_algo_para({'local':'ACA','teacher':1,'buffer_len':0,'T':'10','esb_w':1.0,'distill_w':'0.01*self.round'})
-    self.init_algo_para({'local':'ACA','teacher':1,'buffer_len':0,'T':'10','esb_w':1.0,'distill_w':'0.05*self.round','min_round':5})
-    #local(本地模型)=ACA(当前),OCA(缓存),teacher=0(和local一样),1(两个模型一起，双倍通信),buffer_len:<=0按类别，>0最近k个
+    # 创建一个字典来存储所有参数
+    algo_params = {  #local(本地模型)=ACA(当前),OCA(缓存),teacher=0(和local一样),1(两个模型一起，双倍通信),buffer_len:<=0按类别，>0最近k个
+        'local': 'ACA',
+        'teacher': 1,
+        'show_fn': 1,
+        'buffer_len': 0,
+        'T': '10',
+        'esb_w': 1.0,
+        'distill_w': '0.05*self.round',
+        'distill_coefficient': 0,
+        'min_round': 5,
+    }
+    algo_params = self.set_params(algo_params) #设置自定义参数
+    # 初始化算法参数
+    self.init_algo_para(algo_params)
+  def set_params(self,algo_params):
+    return algo_params
   def initialize(self):
     self.init_extra()
     if self.local=='ACA' and self.teacher==0: #无缓存
