@@ -66,11 +66,11 @@ class SCELoss(torch.nn.Module):
 class Generative(nn.Module):
   # Network Architecture is exactly same as in infoGAN (https://arxiv.org/abs/1606.03657)
   # Architecture : FC1024_BR-FC7x7x128_BR-(64)4dc2s_BR-(1)4dc2s_S
-  def __init__(self, input_dim, image_channels, class_num, latent_dim, input_size, device, transform=None, VQ=None) -> None:
+  def __init__(self, input_dim, image_channels, class_num, latent_dim, img_size, device, transform=None, VQ=None) -> None:
     super().__init__()
     self.input_dim = input_dim
     self.image_channels = image_channels
-    self.input_size = input_size
+    self.img_size = img_size
     self.class_num = class_num
     self.transform = transform
     self.device = device
@@ -80,8 +80,8 @@ class Generative(nn.Module):
         nn.Linear(self.input_dim, 64),
         nn.BatchNorm1d(64),
         nn.ReLU(),
-        nn.Linear(64, latent_dim * (self.input_size // 4) * (self.input_size // 4)),
-        nn.BatchNorm1d(latent_dim * (self.input_size // 4) * (self.input_size // 4)),
+        nn.Linear(64, latent_dim * (self.img_size // 4) * (self.img_size // 4)),
+        nn.BatchNorm1d(latent_dim * (self.img_size // 4) * (self.img_size // 4)),
         nn.ReLU(),
     )
     self.conv = nn.Sequential(
@@ -107,7 +107,7 @@ class Generative(nn.Module):
     label_embedding = self.embedding(y)
     h = torch.mul(input.float(), label_embedding.float())
     z = self.fc(h)
-    z = z.view(-1, self.latent_dim, (self.input_size // 4), (self.input_size // 4))
+    z = z.view(-1, self.latent_dim, (self.img_size // 4), (self.img_size // 4))
     #x = self.conv(x)
     if self.vqgan!=None:
       z, _, _ = self.vqgan.codebook(z)
@@ -173,7 +173,7 @@ class KFClient(GKDClient):
     else:
       vqgan = None
     self.G = Generative(self.noise_dim, self.img_channels, self.num_classes, self.latent_dim, \
-                  self.input_size, self.device ,transform=self.transform, VQ=vqgan).to(self.device)
+                  self.img_size, self.device ,transform=self.transform, VQ=vqgan).to(self.device)
     sample_z_=torch.tensor(np.random.normal(0, 1, (self.num_classes, self.noise_dim)))
     self.sample_z_=sample_z_.unsqueeze(1).repeat(1,self.num_classes,1).reshape(-1,self.noise_dim).to(self.device)
   def get_rslt_path(self):
