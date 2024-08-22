@@ -149,7 +149,7 @@ class KFServer(GKDServer): #FedGKD，FedKF通用，传输额外的缓存模型
     self.init_algo_para(algo_params)
   def set_params(self,algo_params):
     return algo_params
- class KFClient(GKDClient):
+class KFClient(GKDClient):
   def initialize(self, *args, **kwargs):
     self.extra_init()
     self.ensemble_model = None
