@@ -172,7 +172,7 @@ class KFClient(GKDClient):
       vqgan = get_model(self.option['vqgan_args'],self.option['task'],self.id)
     else:
       vqgan = None
-    self.G = Generative(self.noise_dim, self.image_channels, self.num_classes, self.latent_dim, \
+    self.G = Generative(self.noise_dim, self.img_channels, self.num_classes, self.latent_dim, \
                   self.input_size, self.device ,transform=self.transform, VQ=vqgan).to(self.device)
     sample_z_=torch.tensor(np.random.normal(0, 1, (self.num_classes, self.noise_dim)))
     self.sample_z_=sample_z_.unsqueeze(1).repeat(1,self.num_classes,1).reshape(-1,self.noise_dim).to(self.device)
