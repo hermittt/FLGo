@@ -131,7 +131,7 @@ class KFServer(GKDServer): #FedGKD，FedKF通用，传输额外的缓存模型
         'buffer_len': 0,
         'T': '10',
         'esb_w': 1.0,
-        'distill_w1': 5,
+        'distill_w1': '0.1*self.round', #'distill_w1': 5,
         'distill_w2': '5',
         'min_round': 5,
         'generator_learning_rate': 5e-4,
@@ -194,7 +194,7 @@ class KFClient(GKDClient):
         G = self.generate_and_train_generator(x,y,y_G,train=False)
       distill_loss = self.cal_L_kl(x,outputs)[0]
       G_distill_loss = self.cal_L_kl(G.detach(),model(G.detach()))[0]
-      return loss + distill_loss*self.distill_w1+G_distill_loss*eval(self.distill_w2)
+      return loss + distill_loss*eval(self.distill_w1)+G_distill_loss*eval(self.distill_w2)
     else:
       return loss
 
