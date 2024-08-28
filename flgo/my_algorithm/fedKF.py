@@ -182,21 +182,7 @@ class KFClient(GKDClient):
     c = self.sample_per_class.topk(k=10).indices
     name='client '+str(self.id)+str(c.tolist())
     return 'result_G/' + task + '/' + name
-  def local_training_with_extra_calculate(self, model, loss, outputs, batch_data):
-    if self.round>self.min_round:
-      grad_False(self.G)
-      self.G.eval()
-      x, y = batch_data
-      x,y = x.to(self.device),y.to(self.device)
-      y_G = generate_labels(self.num_classes, y.shape[0], rng_local=self.rng_local).to(self.device)
-      with torch.no_grad():
-        G = self.generate_and_train_generator(x,y,y_G,train=False)
-      distill_loss = self.cal_L_kl(x,outputs)[0]
-      G_distill_loss = self.cal_L_kl(G.detach(),model(G.detach()))[0]
-      return loss + G_distill_loss*eval(self.distill_w)
-      #return loss + (distill_loss+G_distill_loss*self.distill_coefficient)* eval(self.distill_w)
-    else:
-      return loss
+
   def local_training_with_extra_calculate(self, model, loss, outputs, batch_data):
     grad_False(self.G)
     self.G.eval()
@@ -206,8 +192,8 @@ class KFClient(GKDClient):
       y_G = generate_labels(self.num_classes, y.shape[0], rng_local=self.rng_local).to(self.device)
       with torch.no_grad():
         G = self.generate_and_train_generator(x,y,y_G,train=False)
-      distill_loss = self.cal_L_kl(x,outputs,eval(self.T))[0]
-      G_distill_loss = self.cal_L_kl(G.detach(),model(G.detach()),eval(self.T))[0]
+      distill_loss = self.cal_L_kl(x,outputs)[0]
+      G_distill_loss = self.cal_L_kl(G.detach(),model(G.detach()))[0]
       return loss + distill_loss*self.distill_w1+G_distill_loss*eval(self.distill_w2)
     else:
       return loss
