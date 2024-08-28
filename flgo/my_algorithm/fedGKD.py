@@ -21,7 +21,7 @@ class GKDServer(extraServer): #FedGKD，FedKF通用，传输额外的缓存模�
         'buffer_len': 0,
         'T': '10',
         'esb_w': 1.0,
-        'distill_w1': 5,
+        'distill_w1': '0.1*self.round',
         'min_round': 5,
     }
     algo_params = self.set_params(algo_params) #设置自定义参数
@@ -103,7 +103,7 @@ class GKDClient(extraClient):
       x, y = batch_data
       x = x.to(self.device)
       distill_loss = self.cal_L_kl(x,outputs)[0]
-      return loss + distill_loss * self.distill_w1
+      return loss + distill_loss * eval(self.distill_w1)
     else:
       return loss
   def cal_L_kl(self,x,C_student,reduce=True):
