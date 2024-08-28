@@ -126,13 +126,13 @@ class KFServer(GKDServer): #FedGKD，FedKF通用，传输额外的缓存模型
     # 创建一个字典来存储所有参数
     algo_params = {  #local(本地模型)=ACA(当前),OCA(缓存),teacher=0(和local一样),1(两个模型一起，双倍通信),buffer_len:<=0按类别，>0最近k个
         'local': 'ACA',
-        'teacher': 1,
+        'teacher': 0,
         'show_fn': 1,
         'buffer_len': 0,
         'T': '10',
         'esb_w': 1.0,
-        'distill_w1': 10,
-        'distill_w2': '1',
+        'distill_w1': 5,
+        'distill_w2': '5',
         'min_round': 5,
         'generator_learning_rate': 5e-4,
         'act_w': 1e-4,
