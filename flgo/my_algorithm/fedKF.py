@@ -131,8 +131,8 @@ class KFServer(GKDServer): #FedGKD，FedKF通用，传输额外的缓存模型
         'buffer_len': 0,
         'T': '10',
         'esb_w': 1.0,
-        'distill_w': '0.05*self.round',
-        'distill_coefficient': 0,
+        'distill_w1': 10,
+        'distill_w2': '1',
         'min_round': 5,
         'generator_learning_rate': 5e-4,
         'act_w': 1e-4,
@@ -206,9 +206,9 @@ class KFClient(GKDClient):
       y_G = generate_labels(self.num_classes, y.shape[0], rng_local=self.rng_local).to(self.device)
       with torch.no_grad():
         G = self.generate_and_train_generator(x,y,y_G,train=False)
-      distill_loss = self.cal_L_kl(x,outputs)[0]
-      G_distill_loss = self.cal_L_kl(G.detach(),model(G.detach()))[0]
-      return loss + (self.distill_coefficient*distill_loss+(1-self.distill_coefficient)*G_distill_loss)* eval(self.distill_w)
+      distill_loss = self.cal_L_kl(x,outputs,eval(self.T))[0]
+      G_distill_loss = self.cal_L_kl(G.detach(),model(G.detach()),eval(self.T))[0]
+      return loss + distill_loss*self.distill_w1+G_distill_loss*eval(self.distill_w2)
     else:
       return loss
 
