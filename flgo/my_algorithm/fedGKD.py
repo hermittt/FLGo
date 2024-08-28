@@ -16,13 +16,12 @@ class GKDServer(extraServer): #FedGKD，FedKF通用，传输额外的缓存模�
     # 创建一个字典来存储所有参数
     algo_params = {  #local(本地模型)=ACA(当前),OCA(缓存),teacher=0(和local一样),1(两个模型一起，双倍通信),buffer_len:<=0按类别，>0最近k个
         'local': 'ACA',
-        'teacher': 1,
+        'teacher': 0,
         'show_fn': 1,
         'buffer_len': 0,
         'T': '10',
         'esb_w': 1.0,
-        'distill_w': '0.05*self.round',
-        'distill_coefficient': 0,
+        'distill_w1': 5,
         'min_round': 5,
     }
     algo_params = self.set_params(algo_params) #设置自定义参数
@@ -104,7 +103,7 @@ class GKDClient(extraClient):
       x, y = batch_data
       x = x.to(self.device)
       distill_loss = self.cal_L_kl(x,outputs)[0]
-      return loss + distill_loss * eval(self.distill_w)
+      return loss + distill_w1 * eval(self.distill_w)
     else:
       return loss
   def cal_L_kl(self,x,C_student,reduce=True):
