@@ -103,7 +103,7 @@ class GKDClient(extraClient):
       x, y = batch_data
       x = x.to(self.device)
       distill_loss = self.cal_L_kl(x,outputs)[0]
-      return loss + distill_w1 * eval(self.distill_w)
+      return loss + distill_loss * eval(self.distill_w1)
     else:
       return loss
   def cal_L_kl(self,x,C_student,reduce=True):
