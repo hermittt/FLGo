@@ -131,7 +131,7 @@ class KFServer(GKDServer): #FedGKD，FedKF通用，传输额外的缓存模型
         'buffer_len': 0,
         'T': '10',
         'esb_w': 1.0,
-        'distill_w1': '0',#'0.025*self.round',
+        'distill_w1': '0.1*self.round',
         'distill_w2': '0.05*self.round',
         'min_round': 5,
         'generator_learning_rate': 5e-4,
