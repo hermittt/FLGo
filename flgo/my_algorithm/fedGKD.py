@@ -121,3 +121,12 @@ class GKDClient(extraClient):
 class FedGKD:
   Server=GKDServer
   Client=GKDClient
+
+class GKDServer_d1w001(GKDServer):
+  def set_params(self,algo_params):
+     algo_params['distill_w1'] = '0.01*self.round'
+    return algo_params
+class FedGKD_d1w001:
+  Server=GKDServer_d1w001
+  Client=GKDClient
+
