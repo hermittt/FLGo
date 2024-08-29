@@ -251,7 +251,7 @@ class FedKF:
   Server=KFServer
   Client=KFClient
   
-class KFServer_d1w001(KFServer):
+class KFServer_d1w001(KFServer): #mnist-a0.1
   def set_params(self,algo_params):
     algo_params['distill_w1'] = '0.01*self.round'
     return algo_params
