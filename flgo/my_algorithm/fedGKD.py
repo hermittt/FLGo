@@ -98,14 +98,35 @@ class GKDClient(extraClient):
     if self.teacher==1: #两个都传 
       grad_False(self.ensemble_model)
       self.ensemble_model.eval()
+
+  def prepare_train(self,model):
+    grad_False(self.teacher_model)
+    self.teacher_model.eval()
+    if self.teacher==1: #两个都传
+      grad_False(self.ensemble_model)
+      self.ensemble_model.eval()
+    self.step0_flag = 1
+
   def local_training_with_extra_calculate(self, model, loss, outputs, batch_data):
+    x, y = batch_data
+    x = x.to(self.device) 
+    if self.step0_flag == 1:
+      self.step0_flag = 0
+      y_pre = outputs.max(1)[1]
+      matches = y_pre == y # 比较两个tensor是否相等
+      self.init_accuracy = matches.sum().item() / len(y)
+      print(self.init_accuracy)
     if self.round>self.min_round:
-      x, y = batch_data
-      x = x.to(self.device)
       distill_loss = self.cal_L_kl(x,outputs)[0]
-      return loss + distill_loss * eval(self.distill_w1)
+      return loss + distill_loss * eval(self.distill_w1)*max(0.001,self.init_accuracy)
     else:
       return loss
+  
+  def G_acc(self,output,y_G):
+    y_G_pre = output.max(1)[1]
+    matches = y_G_pre == y_G # 比较两个tensor是否相等
+    return matches.sum().item() / len(y_G),matches
+    
   def cal_L_kl(self,x,C_student,reduce=True):
     with torch.no_grad():
       C_teacher = self.teacher_model(x).detach()
