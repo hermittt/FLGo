@@ -210,7 +210,7 @@ class KFClient(GKDClient):
       G_distill_loss,outputs_G = self.cal_L_kl(G.detach(),model(G.detach()),reduce=False)
       G_accuracy = self.G_acc(outputs_G,y_G)[1]
       #return loss + distill_loss*eval(self.distill_w1)+(G_distill_loss*G_accuracy).mean()*eval(self.distill_w2)*self.init_accuracy
-      return loss + distill_loss*eval(self.distill_w1)+(G_distill_loss*G_accuracy).mean()*eval(self.distill_w2)*max(0.01,self.init_accuracy)
+      return loss + (distill_loss*eval(self.distill_w1)+(G_distill_loss*G_accuracy).mean()*eval(self.distill_w2))*max(0.001,self.init_accuracy)
     else:
       return loss
   
