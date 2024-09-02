@@ -109,7 +109,7 @@ class GKDClient(extraClient):
 
   def local_training_with_extra_calculate(self, model, loss, outputs, batch_data):
     x, y = batch_data
-    x = x.to(self.device) 
+    x,y = x.to(self.device),y.to(self.device)
     if self.step0_flag == 1:
       self.step0_flag = 0
       y_pre = outputs.max(1)[1]
