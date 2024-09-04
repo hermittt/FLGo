@@ -188,12 +188,14 @@ class KFClient(GKDClient):
     self.G.eval()
     x, y = batch_data
     x,y = x.to(self.device),y.to(self.device)
+    '''
     if self.step0_flag == 1:
       self.step0_flag = 0
       y_pre = outputs.max(1)[1]
       matches = y_pre == y # 比较两个tensor是否相等
       self.init_accuracy = matches.sum().item() / len(y)
       print(self.init_accuracy)
+    '''
     if self.round>self.min_round :
       y_G = generate_labels(self.num_classes, y.shape[0], rng_local=self.rng_local).to(self.device)
       with torch.no_grad():
@@ -202,7 +204,7 @@ class KFClient(GKDClient):
       G_distill_loss,outputs_G = self.cal_L_kl(G.detach(),model(G.detach()),reduce=False)
       G_accuracy = self.G_acc(outputs_G,y_G)[1]
       #return loss + distill_loss*eval(self.distill_w1)+(G_distill_loss*G_accuracy).mean()*eval(self.distill_w2)*self.init_accuracy
-      return loss + (distill_loss*eval(self.distill_w1)+(G_distill_loss*G_accuracy).mean()*eval(self.distill_w2))*max(0.001,self.init_accuracy)
+      return loss + (distill_loss*eval(self.distill_w1)+(G_distill_loss*G_accuracy).mean()*eval(self.distill_w2))#*max(0.001,self.init_accuracy)
     else:
       return loss
 
