@@ -263,8 +263,9 @@ class KFClient(GKDClient):
       path=self.rslt_path + '/%2d[%d]' % (self.round,i) + '.png'
       image=show_img(img,self.num_classes,path,x=x,transform=self.transform)
       imgs_out.append(wandb.Image(image, caption=[self.round,i]))
-    t = threading.Thread(target=wandb.log, args=({name: imgs_out},))
-    t.start()
+    target=wandb.log({name: imgs_out})
+    #t = threading.Thread(target=wandb.log, args=({name: imgs_out},))
+    #t.start()
 class FedKF:
   Server=KFServer
   Client=KFClient
