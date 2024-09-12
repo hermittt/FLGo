@@ -242,11 +242,11 @@ class KFClient(GKDClient):
   def after_train(self,model):
     self.local_step+=1
     if self.show_fn==1 and self.round>self.min_round:
+      self.save_G()
       grad_False(self.G)
       self.G.eval()
       G = self.G(self.sample_z_,self.sample_y_)[0]
       self.show([G])
-      self.save_G()
   def save_G(self):
       # 保存 self.G 模型到一个文件，例如 'model_G.pth'
       torch.save(self.G.state_dict(), "model_G.pth")
