@@ -246,7 +246,8 @@ class KFClient(GKDClient):
       self.G.eval()
       G = self.G(self.sample_z_,self.sample_y_)[0]
       self.show([G])
-
+      self.save_G()
+  def save_G(self):
       # 保存 self.G 模型到一个文件，例如 'model_G.pth'
       torch.save(self.G.state_dict(), "model_G.pth")
       # 创建 Artifact 并将模型文件加入
