@@ -246,8 +246,17 @@ class KFClient(GKDClient):
       self.G.eval()
       G = self.G(self.sample_z_,self.sample_y_)[0]
       self.show([G])
+
+      # 保存 self.G 模型到一个文件，例如 'model_G.pth'
+      torch.save(self.G.state_dict(), "model_G.pth")
+      # 创建 Artifact 并将模型文件加入
+      artifact = wandb.Artifact('model-G', type='model')
+      artifact.add_file('model_G.pth')
+      # 将 Artifact 上传到 wandb
+      wandb.log_artifact(artifact)
+            
   def show(self,imgs,x=None):
-    name=self.rslt_path+'.png'
+    name=str(self.id)
     imgs_out=[]
     for i, img in enumerate(imgs):
       path=self.rslt_path + '/%2d[%d]' % (self.round,i) + '.png'
