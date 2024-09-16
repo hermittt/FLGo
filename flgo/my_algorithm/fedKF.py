@@ -257,7 +257,7 @@ class KFClient(GKDClient):
       wandb.log_artifact(artifact)
             
   def show(self,imgs,x=None):
-    name=self.rslt_path+'.png'
+    name='client '+str(self.id)
     imgs_out=[]
     for i, img in enumerate(imgs):
       path=self.rslt_path + '/%2d[%d]' % (self.round,i) + '.png'
