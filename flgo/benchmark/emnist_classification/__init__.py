@@ -1,5 +1,5 @@
 import flgo.benchmark.toolkits.visualization
-from flgo.benchmark.emnist_classification.model import cnn
+from flgo.benchmark.emnist_classification.model import cnn_no_bn
 import flgo.benchmark.toolkits.partition
 
 default_partitioner = flgo.benchmark.toolkits.partition.IIDPartitioner
