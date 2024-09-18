@@ -40,6 +40,7 @@ def get_Normalize_mean_std(transform):
   for t in transform.transforms:
     if isinstance(t, transforms.Normalize):
         return t.std,t.mean
+  return torch.tensor([1.0]),torch.tensor([0.0])
 def get_transform(dataset):
   if hasattr(dataset, 'transform'):
     return dataset.transform
