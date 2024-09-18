@@ -10,7 +10,7 @@ class Model(FModule):
         self.conv2 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=5, padding=2)
         self.gn2 = nn.GroupNorm(num_groups=1, num_channels=64)  # 将 BatchNorm2d 替换为 GroupNorm
         self.fc1 = nn.Linear(3136, 512)
-        self.fc = nn.Linear(512, 10)
+        self.fc = nn.Linear(512, 100)
 
     def forward(self, x):
         x = self.get_embedding(x)
