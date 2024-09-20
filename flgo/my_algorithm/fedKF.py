@@ -144,6 +144,7 @@ class KFServer(GKDServer): #FedGKD，FedKF通用，传输额外的缓存模型
         'latent_dim': self.option['latent_dim'],
         'num_classes': self.option['num_classes'],
         'transform': get_transform(self.test_data)
+        'c_loss_type': 'SCE', #'SCE'或者单纯的'CE',
     }
     algo_params = self.set_params(algo_params) #设置自定义参数
     # 初始化算法参数
