@@ -154,7 +154,7 @@ class KFClient(GKDClient):
   def initialize(self, *args, **kwargs):
     self.extra_init()
     self.ensemble_model = None
-    self.loss = SCELoss() #nn.CrossEntropyLoss()
+    self.loss = SCELoss(num_classes=self.num_classes) #nn.CrossEntropyLoss()
     self.KL_loss = KL_Loss_equivalent()
     self.generative_optimizer = torch.optim.Adam(
                   params=self.G.parameters(),
