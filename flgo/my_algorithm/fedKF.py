@@ -228,10 +228,16 @@ class KFClient(GKDClient):
     G = self.G(z_G,y_G)[0]
     mean,var = G.mean(),G.var()
     output,features = out_feature(self.teacher_model,G)
-    c_loss = self.loss(output, y_G)
-    if self.teacher==1:
-      output_esb= self.ensemble_model(G)
-      c_loss = (c_loss + self.esb_w*self.loss(output, y_G))/(1+self.esb_w)
+    
+    if self.c_loss_type=='CE':
+      c_loss = F.cross_entropy(output, y_G)
+      if self.teacher==1:
+        c_loss = (c_loss + self.esb_w*F.cross_entropy(output, y_G))/(1+self.esb_w)
+    else:
+      c_loss = self.loss(output, y_G) #+ self.loss(output3, y)
+      if self.teacher==1:
+        c_loss = (c_loss + self.esb_w*self.loss(output, y_G))/(1+self.esb_w)
+    
     self.trainning_output['c_loss'] = c_loss.item()
     loss_activation = -features.abs().mean()
     #bn_ls = self.bn_loss.bn_ls()#bn_loss 4
