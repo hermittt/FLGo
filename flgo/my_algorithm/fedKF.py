@@ -277,6 +277,23 @@ class FedKF:
   Server=KFServer
   Client=KFClient
 
+class KFServer_CE(KFServer): #mnist-a0.1
+  def set_params(self,algo_params):
+    algo_params['c_loss_type'] = 'CE'
+    return algo_params
+class FedKF_CE:
+  Server=KFServer_CE
+  Client=KFClient
+
+class KFServer_CE_d1w0001(KFServer): #mnist-a0.1
+  def set_params(self,algo_params):
+    algo_params['c_loss_type'] = 'CE'
+    algo_params['distill_w1'] = '0.001*self.round'
+    return algo_params
+class FedKF_CE_d1w0001:
+  Server=KFServer_CE_d1w0001
+  Client=KFClient
+
 class KFServer_d1w0(KFServer): #mnist-a0.1
   def set_params(self,algo_params):
     algo_params['distill_w1'] = '0.0'
