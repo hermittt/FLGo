@@ -145,6 +145,7 @@ class KFServer(GKDServer): #FedGKD，FedKF通用，传输额外的缓存模型
         'num_classes': self.option['num_classes'],
         'transform': get_transform(self.test_data),
         'c_loss_type': 'SCE', #'SCE'或者单纯的'CE',
+        'init_acc':1,
     }
     algo_params = self.set_params(algo_params) #设置自定义参数
     # 初始化算法参数
@@ -204,7 +205,10 @@ class KFClient(GKDClient):
       G_distill_loss,outputs_G = self.cal_L_kl(G.detach(),model(G.detach()),reduce=False)
       G_accuracy = self.G_acc(outputs_G,y_G)[1]
       #return loss + distill_loss*eval(self.distill_w1)+(G_distill_loss*G_accuracy).mean()*eval(self.distill_w2)*self.init_accuracy
-      return loss + (distill_loss*eval(self.distill_w1)+(G_distill_loss*G_accuracy).mean()*eval(self.distill_w2))*max(0.001,self.init_accuracy)
+      if self.init_acc:
+        return loss + (distill_loss*eval(self.distill_w1)+(G_distill_loss*G_accuracy).mean()*eval(self.distill_w2))*max(0.001,self.init_accuracy)
+      else:
+        return loss + (distill_loss*eval(self.distill_w1)+(G_distill_loss*G_accuracy).mean()*eval(self.distill_w2))
     else:
       return loss
 
@@ -293,6 +297,26 @@ class KFServer_CE_d1w0001(KFServer): #mnist-a0.1
 class FedKF_CE_d1w0001:
   Server=KFServer_CE_d1w0001
   Client=KFClient
+
+class KFServer_CE0(KFServer): #mnist-a0.1
+  def set_params(self,algo_params):
+    algo_params['c_loss_type'] = 'CE'
+    algo_params['init_acc'] = 0
+    return algo_params
+class FedKF_CE0:
+  Server=KFServer_CE0
+  Client=KFClient
+
+class KFServer_CE0_d1w0001(KFServer): #mnist-a0.1
+  def set_params(self,algo_params):
+    algo_params['c_loss_type'] = 'CE'
+    algo_params['distill_w1'] = '0.001*self.round'
+    algo_params['init_acc'] = 0
+    return algo_params
+class FedKF_CE0_d1w0001:
+  Server=KFServer_CE0_d1w0001
+  Client=KFClient
+  
 
 class KFServer_d1w0(KFServer): #mnist-a0.1
   def set_params(self,algo_params):
