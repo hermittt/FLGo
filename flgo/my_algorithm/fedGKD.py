@@ -119,7 +119,10 @@ class GKDClient(extraClient):
       print(self.init_accuracy)
     if self.round>self.min_round:
       distill_loss = self.cal_L_kl(x,outputs)[0]
-      return loss + distill_loss * eval(self.distill_w1)*max(0.001,self.init_accuracy)
+      if self.init_acc:
+        return loss + distill_loss * eval(self.distill_w1)*max(0.001,self.init_accuracy)
+      else:
+        return loss + distill_loss * eval(self.distill_w1)
     else:
       return loss
   
@@ -142,6 +145,14 @@ class GKDClient(extraClient):
       return distill_loss,(F.softmax(C_teacher)+F.softmax(C_ensemble))/2
 class FedGKD:
   Server=GKDServer
+  Client=GKDClient
+
+class GKDServer_d1w0001(GKDServer):
+  def set_params(self,algo_params):
+    algo_params['distill_w1'] = '0.001*self.round'
+    return algo_params
+class FedGKD_d1w0001:
+  Server=GKDServer_d1w0001
   Client=GKDClient
 
 class GKDServer_d1w001(GKDServer):
