@@ -3,6 +3,23 @@ from flgo.benchmark.toolkits.cv.classification import BuiltinClassGenerator, Bui
 import flgo.benchmark
 import os.path
 
+import os
+from flgo.benchmark.toolkits.cv.classification import GeneralCalculator, FromDatasetPipe, FromDatasetGenerator
+from .config import train_data, test_data
+
+class TaskGenerator(FromDatasetGenerator):
+    def __init__(self):
+        super(TaskGenerator, self).__init__(benchmark=os.path.split(os.path.dirname(__file__))[-1],
+                                            train_data=train_data, test_data=test_data)
+
+class TaskPipe(FromDatasetPipe):
+    def __init__(self, task_path):
+        super(TaskPipe, self).__init__(task_path, train_data, test_data)
+
+TaskCalculator = GeneralCalculator
+
+
+'''
 builtin_class = torchvision.datasets.EMNIST
 transform = torchvision.transforms.Compose([torchvision.transforms.ToTensor()])
 path = os.path.join(flgo.benchmark.path,'RAW_DATA', 'EMNIST')
@@ -22,3 +39,4 @@ class TaskPipe(BuiltinClassPipe):
         super(TaskPipe, self).__init__(task_path, builtin_class, transform)
 
 TaskCalculator = GeneralCalculator
+'''
