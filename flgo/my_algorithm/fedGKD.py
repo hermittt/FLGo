@@ -23,6 +23,7 @@ class GKDServer(extraServer): #FedGKD，FedKF通用，传输额外的缓存模�
         'esb_w': 1.0,
         'distill_w1': '0.1*self.round',
         'min_round': 5,
+        'init_acc':1,
     }
     algo_params = self.set_params(algo_params) #设置自定义参数
     # 初始化算法参数
