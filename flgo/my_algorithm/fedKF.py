@@ -201,14 +201,15 @@ class KFClient(GKDClient):
       y_G = generate_labels(self.num_classes, y.shape[0], rng_local=self.rng_local).to(self.device)
       with torch.no_grad():
         G = self.generate_and_train_generator(x,y,y_G,train=False)
-      distill_loss = self.cal_L_kl(x,outputs)[0]
+      if eval(self.distill_w1)>0:
+        distill_loss = self.cal_L_kl(x,outputs)[0]
       G_distill_loss,outputs_G = self.cal_L_kl(G.detach(),model(G.detach()),reduce=False)
       G_accuracy = self.G_acc(outputs_G,y_G)[1]
-      #return loss + distill_loss*eval(self.distill_w1)+(G_distill_loss*G_accuracy).mean()*eval(self.distill_w2)*self.init_accuracy
-      if self.init_acc:
-        return loss + (distill_loss*eval(self.distill_w1)+(G_distill_loss*G_accuracy).mean()*eval(self.distill_w2))*max(0.001,self.init_accuracy)
+      w = max(0.001, self.init_accuracy) if self.init_acc else 1
+      if eval(self.distill_w1)>0:
+        return loss + (distill_loss*eval(self.distill_w1)+(G_distill_loss*G_accuracy).mean()*eval(self.distill_w2))*w
       else:
-        return loss + (distill_loss*eval(self.distill_w1)+(G_distill_loss*G_accuracy).mean()*eval(self.distill_w2))
+        return loss + ((G_distill_loss*G_accuracy).mean()*eval(self.distill_w2))*w
     else:
       return loss
 
@@ -298,6 +299,15 @@ class FedKF_CE_d1w0001:
   Server=KFServer_CE_d1w0001
   Client=KFClient
 
+class KFServer_CE_d1w0(KFServer): #mnist-a0.1
+  def set_params(self,algo_params):
+    algo_params['c_loss_type'] = 'CE'
+    algo_params['distill_w1'] = '0'
+    return algo_params
+class FedKF_CE_d1w0:
+  Server=KFServer_CE_d1w0
+  Client=KFClient
+  
 class KFServer_CE0(KFServer): #mnist-a0.1
   def set_params(self,algo_params):
     algo_params['c_loss_type'] = 'CE'
@@ -315,6 +325,16 @@ class KFServer_CE0_d1w0001(KFServer): #mnist-a0.1
     return algo_params
 class FedKF_CE0_d1w0001:
   Server=KFServer_CE0_d1w0001
+  Client=KFClient
+
+class KFServer_CE0_d1w0(KFServer): #mnist-a0.1
+  def set_params(self,algo_params):
+    algo_params['c_loss_type'] = 'CE'
+    algo_params['distill_w1'] = '0'
+    algo_params['init_acc'] = 0
+    return algo_params
+class FedKF_CE0_d1w0:
+  Server=KFServer_CE0_d1w0
   Client=KFClient
   
 
