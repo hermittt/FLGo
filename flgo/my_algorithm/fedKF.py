@@ -146,6 +146,7 @@ class KFServer(GKDServer): #FedGKD，FedKF通用，传输额外的缓存模型
         'transform': get_transform(self.test_data),
         'c_loss_type': 'SCE', #'SCE'或者单纯的'CE',
         'init_acc':1,
+        'self.save_md':0
     }
     algo_params = self.set_params(algo_params) #设置自定义参数
     # 初始化算法参数
@@ -259,7 +260,7 @@ class KFClient(GKDClient):
       self.G.eval()
       G = self.G(self.sample_z_,self.sample_y_)[0]
       self.show([G])
-      if self.round>80:
+      if self.save_md==1:
         self.save_G()
   def save_G(self):
       # 保存 self.G 模型到一个文件，例如 'model_G.pth'
