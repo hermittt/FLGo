@@ -319,6 +319,16 @@ class FedKF_CE0:
   Server=KFServer_CE0
   Client=KFClient
 
+class KFServer_CE01(KFServer): #mnist-a0.1
+  def set_params(self,algo_params):
+    algo_params['c_loss_type'] = 'CE'
+    algo_params['init_acc'] = 0
+    algo_params['save_md'] = 1
+    return algo_params
+class FedKF_CE01:
+  Server=KFServer_CE01
+  Client=KFClient
+
 class KFServer_CE0_d1w0001(KFServer): #mnist-a0.1
   def set_params(self,algo_params):
     algo_params['c_loss_type'] = 'CE'
