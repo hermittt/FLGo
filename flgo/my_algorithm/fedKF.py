@@ -266,7 +266,7 @@ class KFClient(GKDClient):
       # 保存 self.G 模型到一个文件，例如 'model_G.pth'
       torch.save(self.G.state_dict(), "model_G.pth")
       # 创建 Artifact 并将模型文件加入
-      artifact = wandb.Artifact('model-G %2d %2d' % (self.round,self.id), type='model')
+      artifact = wandb.Artifact('model_G %2d %2d' % (self.round,self.id), type='model')
       artifact.add_file('model_G.pth')
       # 将 Artifact 上传到 wandb
       wandb.log_artifact(artifact)
